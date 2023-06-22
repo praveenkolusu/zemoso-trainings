@@ -1,4 +1,4 @@
-public interface Interface1 {
+public interface Vehicle {
 	void method1();
     void method2();
 

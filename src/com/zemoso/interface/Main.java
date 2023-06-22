@@ -1,14 +1,14 @@
 public class Main {
 
-	public static void methodA(Interface1 obj) {
+	public static void methodA(Vehicle obj) {
         
     }
 
-    public static void methodB(Interface2 obj) {
+    public static void methodB(Rodent obj) {
         
     }
 
-    public static void methodC(Interface3 obj) {
+    public static void methodC(Thing obj) {
         
     }
 
