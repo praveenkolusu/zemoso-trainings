@@ -18,6 +18,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		MyClass myObject = new MyClass();
+        System.out.println("Interface default method value: " + myObject.getInt());
         methodA(myObject);
         methodB(myObject);
         methodC(myObject);
