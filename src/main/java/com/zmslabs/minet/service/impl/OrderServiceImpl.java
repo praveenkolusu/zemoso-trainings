@@ -65,12 +65,28 @@ public class OrderServiceImpl implements OrdersService {
 
     @Override
     public OrdersResponseDTO sellAssets(OrdersDTO ordersDTO) {
-        User user= userRepository.findById(ordersDTO.getUserId()).orElseThrow(()->new DataNotFoundException("user details not found"));
-        Asset asset = assetRepository.findById(ordersDTO.getAssetId()).orElseThrow(()->new DataNotFoundException("asset details not found"));
+        User user= userRepository.findById(ordersDTO.getUserId())
+                .orElseThrow(()->new DataNotFoundException("user details not found"));
+        Asset asset = assetRepository.findById(ordersDTO.getAssetId())
+                .orElseThrow(()->new DataNotFoundException("asset details not found"));
+        Holding holding= holdingRepository.findByUserAndAsset(user,asset)
+                .orElseThrow(()->new DataNotFoundException("user holding not present."));
 
         Double transactionAmount= ordersDTO.getPrice()* ordersDTO.getQuantity();
+
+        if(holding.getQuantity()>ordersDTO.getQuantity()){
+            holding.setAmount(holding.getAmount()- transactionAmount);
+            holding.setQuantity(holding.getQuantity()-ordersDTO.getQuantity());
+            holding.setLastAcquisitionDate(LocalDateTime.now());
+            holding.setLastAcquisitionAmount(ordersDTO.getPrice());
+            holdingRepository.save(holding);
+        }else if(holding.getQuantity().equals(ordersDTO.getQuantity())){
+            holdingRepository.delete(holding);
+        }else{
+            throw new MinetAppException("cannot sell more than existing quantity","9020");
+        }
         Transaction transaction =Transaction.builder()
-                .type("BUY")
+                .type("SELL")
                 .amount(transactionAmount)
                 .user(user)
                 .asset(asset).timestamp(LocalDateTime.now()).build();
@@ -81,17 +97,6 @@ public class OrderServiceImpl implements OrdersService {
         wallet.setBalance(wallet.getBalance()+transactionAmount);
         walletRepository.save(wallet);
 
-        Optional<Holding> optionalHolding= holdingRepository.findByUserAndAsset(user,asset);
-        if(optionalHolding.isPresent() && optionalHolding.get().getQuantity()>ordersDTO.getQuantity()){
-            Holding  holding= optionalHolding.get();
-            holding.setAmount(holding.getAmount()- transactionAmount);
-            holding.setQuantity(holding.getQuantity()-ordersDTO.getQuantity());
-            holding.setLastAcquisitionDate(LocalDateTime.now());
-            holding.setLastAcquisitionAmount(ordersDTO.getPrice());
-            holdingRepository.save(holding);
-        }else if(optionalHolding.isPresent() && optionalHolding.get().getQuantity().equals(ordersDTO.getQuantity())){
-            holdingRepository.delete(optionalHolding.get());
-        }
         return OrdersResponseDTO.builder().code("1000")
                 .message("Sell Order Successful").build();
     }
