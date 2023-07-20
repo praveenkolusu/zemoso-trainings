@@ -19,10 +19,10 @@ public class WatchList {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "asset_id")
-    private Asset asset;
-    @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;
+    @ManyToOne
+    @JoinColumn(name = "asset_id")
+    private Asset asset;
 }
