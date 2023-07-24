@@ -28,9 +28,7 @@ class OrdersControllerTest {
     @MockBean
     private OrdersService ordersService;
 
-    /**
-     * Method under test: {@link OrdersController#buyAssets(OrdersDTO)}
-     */
+
     @Test
     void testBuyAssets() throws Exception {
         when(ordersService.buyAssets(Mockito.<OrdersDTO>any()))
@@ -54,12 +52,9 @@ class OrdersControllerTest {
                         MockMvcResultMatchers.content().string("{\"message\":\"Not all who wander are lost\",\"code\":\"Code\"}"));
     }
 
-    /**
-     * Method under test: {@link OrdersController#sellAssets(OrdersDTO)}
-     */
     @Test
     void testSellAssets() throws Exception {
-        when(ordersService.buyAssets(Mockito.<OrdersDTO>any()))
+        when(ordersService.sellAssets(Mockito.<OrdersDTO>any()))
                 .thenReturn(new OrdersResponseDTO("Not all who wander are lost", "Code"));
 
         OrdersDTO ordersDTO = new OrdersDTO();

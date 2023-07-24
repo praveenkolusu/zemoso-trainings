@@ -24,6 +24,6 @@ public class OrdersController {
 
     @PostMapping("/sell")
     public ResponseEntity<OrdersResponseDTO> sellAssets(@RequestBody OrdersDTO ordersDTO){
-        return new ResponseEntity<>(ordersService.buyAssets(ordersDTO),HttpStatus.OK);
+        return new ResponseEntity<>(ordersService.sellAssets(ordersDTO),HttpStatus.OK);
     }
 }
